@@ -1,7 +1,8 @@
-# MOS Backup
+# MOS Backup Plus
 
-mos-backup provides a **MOS plugin** for automated backup management of boot,
-appdata and libvirt.
+mos-backup-plus provides a **MOS plugin** for automated backup management of boot,
+appdata and libvirt. It is based on the original MOS Backup plugin and can be
+installed alongside it (separate plugin ID, paths and settings).
 
 ---
 

@@ -84,23 +84,23 @@ case "$1" in
     echo "]"
   ;;
   --run-all)
-    VERSION=$(jq -r '.tag' /boot/optional/plugins/backup/template.json)
-    source "/boot/optional/plugins/backup/$VERSION/functions"
+    VERSION=$(jq -r '.tag' /boot/optional/plugins/backup-plus/template.json)
+    source "/boot/optional/plugins/backup-plus/$VERSION/functions"
     run_all_backups
   ;;
   --run-boot)
-    VERSION=$(jq -r '.tag' /boot/optional/plugins/backup/template.json)
-    source "/boot/optional/plugins/backup/$VERSION/functions"
+    VERSION=$(jq -r '.tag' /boot/optional/plugins/backup-plus/template.json)
+    source "/boot/optional/plugins/backup-plus/$VERSION/functions"
     run_boot_backup
   ;;
   --run-appdata)
-    VERSION=$(jq -r '.tag' /boot/optional/plugins/backup/template.json)
-    source "/boot/optional/plugins/backup/$VERSION/functions"
+    VERSION=$(jq -r '.tag' /boot/optional/plugins/backup-plus/template.json)
+    source "/boot/optional/plugins/backup-plus/$VERSION/functions"
     run_appdata_backup
   ;;
   --run_libvirt)
-    VERSION=$(jq -r '.tag' /boot/optional/plugins/backup/template.json)
-    source "/boot/optional/plugins/backup/$VERSION/functions"
+    VERSION=$(jq -r '.tag' /boot/optional/plugins/backup-plus/template.json)
+    source "/boot/optional/plugins/backup-plus/$VERSION/functions"
     run_libvirt_backup
   ;;
 esac

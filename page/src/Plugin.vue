@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="mb-4">{{ $t('plugin_backup.title') }}</h2>
+    <h2 class="mb-4">{{ $t('plugin_backup_plus.title') }}</h2>
     <v-skeleton-loader v-if="loading" :loading="true" type="card" />
     <div v-else style="margin-bottom: 80px">
 
@@ -8,17 +8,17 @@
       <v-card class="mb-4 pa-0">
         <v-card-title class="d-flex align-center">
           <v-icon class="mr-2">mdi-backup-restore</v-icon>
-          <span>{{ $t('plugin_backup.backup_all') }}</span>
+          <span>{{ $t('plugin_backup_plus.backup_all') }}</span>
         </v-card-title>
         <v-card-text>
-          <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup.backup_all_hint') }}</span>
+          <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup_plus.backup_all_hint') }}</span>
           <v-divider class="my-4"></v-divider>
-          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
+          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup_plus.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
             <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.backup_all.schedule.enabled"
-                :label="$t('plugin_backup.schedule')"
+                :label="$t('plugin_backup_plus.schedule')"
                 inset
                 color="green"
                 hide-details
@@ -27,7 +27,7 @@
             <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.backup_all.schedule.cron"
-                :label="$t('plugin_backup.cron_schedule')"
+                :label="$t('plugin_backup_plus.cron_schedule')"
                 :disabled="!settings.backup_all.schedule.enabled"
                 density="comfortable"
                 hide-details="auto"
@@ -37,7 +37,7 @@
           <v-divider class="my-4"></v-divider>
           <v-btn color="secondary" rounded :loading="bootRunning || appdataRunning || libvirtRunning" @click="runAllBackups">
             <v-icon start>mdi-backup-restore</v-icon>
-            {{ $t('plugin_backup.backup_now') }}
+            {{ $t('plugin_backup_plus.backup_now') }}
           </v-btn>
         </v-card-text>
       </v-card>
@@ -46,19 +46,19 @@
       <v-card class="mb-4 pa-0">
         <v-card-title class="d-flex align-center">
           <v-icon class="mr-2">mdi-bell-outline</v-icon>
-          <span>{{ $t('plugin_backup.notifications') }}</span>
+          <span>{{ $t('plugin_backup_plus.notifications') }}</span>
         </v-card-title>
         <v-card-text>
-          <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup.notifications_hint') }}</span>
+          <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup_plus.notifications_hint') }}</span>
           <v-radio-group v-model="settings.notifications.mode" class="pt-2" inline hide-details>
-            <v-radio value="always" :label="$t('plugin_backup.notify_mode_always')"></v-radio>
-            <v-radio value="errors" :label="$t('plugin_backup.notify_mode_errors')"></v-radio>
+            <v-radio value="always" :label="$t('plugin_backup_plus.notify_mode_always')"></v-radio>
+            <v-radio value="errors" :label="$t('plugin_backup_plus.notify_mode_errors')"></v-radio>
           </v-radio-group>
           <v-row class="pt-2" v-if="settings.notifications.mode === 'always'">
             <v-col cols="12" md="6">
               <v-switch
                 v-model="settings.notifications.start"
-                :label="$t('plugin_backup.notify_start')"
+                :label="$t('plugin_backup_plus.notify_start')"
                 inset
                 color="green"
                 hide-details
@@ -67,7 +67,7 @@
             <v-col cols="12" md="6">
               <v-switch
                 v-model="settings.notifications.finish"
-                :label="$t('plugin_backup.notify_finish')"
+                :label="$t('plugin_backup_plus.notify_finish')"
                 inset
                 color="green"
                 hide-details
@@ -81,33 +81,33 @@
       <v-card class="mb-4 pa-0">
         <v-card-title class="d-flex align-center">
           <v-icon class="mr-2">mdi-harddisk</v-icon>
-          <span>{{ $t('plugin_backup.boot_backup') }}</span>
+          <span>{{ $t('plugin_backup_plus.boot_backup') }}</span>
         </v-card-title>
         <v-card-text>
           <v-text-field
             v-model="settings.boot.destination"
-            :label="$t('plugin_backup.destination')"
+            :label="$t('plugin_backup_plus.destination')"
             append-inner-icon="mdi-folder"
             @click:append-inner="openFsDialog('boot', 'destination')"
-            :hint="$t('plugin_backup.boot_destination_hint')"
+            :hint="$t('plugin_backup_plus.boot_destination_hint')"
             persistent-hint
           ></v-text-field>
           <v-row class="mt-2">
             <v-col cols="12" md="6">
               <v-switch
                 v-model="settings.boot.compression"
-                :label="$t('plugin_backup.compression')"
+                :label="$t('plugin_backup_plus.compression')"
                 inset
                 color="green"
                 density="compact"
-                :hint="$t('plugin_backup.compression_hint')"
+                :hint="$t('plugin_backup_plus.compression_hint')"
                 persistent-hint
               ></v-switch>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model.number="settings.boot.backups_to_keep"
-                :label="$t('plugin_backup.backups_to_keep')"
+                :label="$t('plugin_backup_plus.backups_to_keep')"
                 type="number"
                 min="1"
                 max="100"
@@ -116,12 +116,12 @@
             </v-col>
           </v-row>
           <v-divider class="my-4"></v-divider>
-          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
+          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup_plus.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
             <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.boot.schedule.enabled"
-                :label="$t('plugin_backup.schedule')"
+                :label="$t('plugin_backup_plus.schedule')"
                 inset
                 color="green"
                 hide-details
@@ -130,7 +130,7 @@
             <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.boot.schedule.cron"
-                :label="$t('plugin_backup.cron_schedule')"
+                :label="$t('plugin_backup_plus.cron_schedule')"
                 :disabled="!settings.boot.schedule.enabled"
                 density="comfortable"
                 hide-details="auto"
@@ -141,9 +141,9 @@
           <div class="d-flex align-center">
             <v-btn color="primary" rounded :loading="bootRunning" :disabled="!settings.boot.destination" @click="runBackup('run_boot_backup', 'Boot Backup', 'boot')">
               <v-icon start>mdi-backup-restore</v-icon>
-              {{ $t('plugin_backup.backup_now') }}
+              {{ $t('plugin_backup_plus.backup_now') }}
             </v-btn>
-            <span v-if="bootRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
+            <span v-if="bootRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
           </div>
         </v-card-text>
       </v-card>
@@ -152,20 +152,20 @@
       <v-card class="mb-4 pa-0">
         <v-card-title class="d-flex align-center">
           <v-icon class="mr-2">mdi-folder-multiple</v-icon>
-          <span>{{ $t('plugin_backup.appdata_backup') }}</span>
+          <span>{{ $t('plugin_backup_plus.appdata_backup') }}</span>
         </v-card-title>
         <v-card-text>
           <v-text-field
             :model-value="appdataSource"
-            :label="$t('plugin_backup.source')"
-            :hint="$t('plugin_backup.appdata_source_hint')"
+            :label="$t('plugin_backup_plus.source')"
+            :hint="$t('plugin_backup_plus.appdata_source_hint')"
             persistent-hint
             readonly
             disabled
           ></v-text-field>
           <v-text-field
             v-model="settings.appdata.destination"
-            :label="$t('plugin_backup.destination')"
+            :label="$t('plugin_backup_plus.destination')"
             append-inner-icon="mdi-folder"
             @click:append-inner="openFsDialog('appdata', 'destination')"
             class="mt-2"
@@ -174,18 +174,18 @@
             <v-col cols="12" md="6">
               <v-switch
                 v-model="settings.appdata.compression"
-                :label="$t('plugin_backup.compression')"
+                :label="$t('plugin_backup_plus.compression')"
                 inset
                 color="green"
                 density="compact"
-                :hint="$t('plugin_backup.compression_hint')"
+                :hint="$t('plugin_backup_plus.compression_hint')"
                 persistent-hint
               ></v-switch>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model.number="settings.appdata.backups_to_keep"
-                :label="$t('plugin_backup.backups_to_keep')"
+                :label="$t('plugin_backup_plus.backups_to_keep')"
                 type="number"
                 min="1"
                 max="100"
@@ -194,11 +194,11 @@
             </v-col>
           </v-row>
           <v-divider class="my-4"></v-divider>
-          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.exclude_dirs') }}</span>
+          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup_plus.exclude_dirs') }}</span>
           <div class="mt-2">
             <v-btn size="small" variant="tonal" color="primary" @click="fetchAppdataDirs(); fetchContainerNames()" :loading="appdataDirsLoading" class="mb-2">
               <v-icon start>mdi-refresh</v-icon>
-              {{ $t('plugin_backup.refresh_dirs') }}
+              {{ $t('plugin_backup_plus.refresh_dirs') }}
             </v-btn>
             <v-chip-group v-if="availableAppdataDirs.length > 0" v-model="settings.appdata.exclude_dirs" column multiple>
               <v-chip
@@ -212,13 +212,13 @@
               </v-chip>
             </v-chip-group>
             <div v-else class="text-grey text-body-2 mt-1">
-              {{ $t('plugin_backup.no_dirs_hint') }}
+              {{ $t('plugin_backup_plus.no_dirs_hint') }}
             </div>
           </div>
           <v-divider class="my-4"></v-divider>
-          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.stop_containers') }}</span>
+          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup_plus.stop_containers') }}</span>
           <div class="mt-1">
-            <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup.stop_containers_hint') }}</span>
+            <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup_plus.stop_containers_hint') }}</span>
           </div>
           <div class="mt-2">
             <v-chip-group v-if="containerNames.length > 0" v-model="settings.appdata.stop_containers" column multiple>
@@ -234,16 +234,16 @@
               </v-chip>
             </v-chip-group>
             <div v-else class="text-grey text-body-2 mt-1">
-              {{ $t('plugin_backup.no_containers_hint') }}
+              {{ $t('plugin_backup_plus.no_containers_hint') }}
             </div>
           </div>
           <v-divider class="my-4"></v-divider>
-          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
+          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup_plus.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
             <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.appdata.schedule.enabled"
-                :label="$t('plugin_backup.schedule')"
+                :label="$t('plugin_backup_plus.schedule')"
                 inset
                 color="green"
                 hide-details
@@ -252,7 +252,7 @@
             <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.appdata.schedule.cron"
-                :label="$t('plugin_backup.cron_schedule')"
+                :label="$t('plugin_backup_plus.cron_schedule')"
                 :disabled="!settings.appdata.schedule.enabled"
                 density="comfortable"
                 hide-details="auto"
@@ -263,9 +263,9 @@
           <div class="d-flex align-center">
             <v-btn color="primary" rounded :loading="appdataRunning" :disabled="!appdataSource || !settings.appdata.destination" @click="runBackup('run_appdata_backup', 'Appdata Backup', 'appdata')">
               <v-icon start>mdi-backup-restore</v-icon>
-              {{ $t('plugin_backup.backup_now') }}
+              {{ $t('plugin_backup_plus.backup_now') }}
             </v-btn>
-            <span v-if="appdataRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
+            <span v-if="appdataRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
           </div>
         </v-card-text>
       </v-card>
@@ -274,20 +274,20 @@
       <v-card class="mb-4 pa-0">
         <v-card-title class="d-flex align-center">
           <v-icon class="mr-2">mdi-desktop-classic</v-icon>
-          <span>{{ $t('plugin_backup.libvirt_backup') }}</span>
+          <span>{{ $t('plugin_backup_plus.libvirt_backup') }}</span>
         </v-card-title>
         <v-card-text>
           <v-text-field
             v-model="settings.libvirt.source"
-            :label="$t('plugin_backup.source')"
+            :label="$t('plugin_backup_plus.source')"
             append-inner-icon="mdi-folder"
             @click:append-inner="openFsDialog('libvirt', 'source')"
-            :hint="$t('plugin_backup.libvirt_source_hint')"
+            :hint="$t('plugin_backup_plus.libvirt_source_hint')"
             persistent-hint
           ></v-text-field>
           <v-text-field
             v-model="settings.libvirt.destination"
-            :label="$t('plugin_backup.destination')"
+            :label="$t('plugin_backup_plus.destination')"
             append-inner-icon="mdi-folder"
             @click:append-inner="openFsDialog('libvirt', 'destination')"
             class="mt-2"
@@ -296,18 +296,18 @@
             <v-col cols="12" md="6">
               <v-switch
                 v-model="settings.libvirt.compression"
-                :label="$t('plugin_backup.compression')"
+                :label="$t('plugin_backup_plus.compression')"
                 inset
                 color="green"
                 density="compact"
-                :hint="$t('plugin_backup.compression_hint')"
+                :hint="$t('plugin_backup_plus.compression_hint')"
                 persistent-hint
               ></v-switch>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model.number="settings.libvirt.backups_to_keep"
-                :label="$t('plugin_backup.backups_to_keep')"
+                :label="$t('plugin_backup_plus.backups_to_keep')"
                 type="number"
                 min="1"
                 max="100"
@@ -316,12 +316,12 @@
             </v-col>
           </v-row>
           <v-divider class="my-4"></v-divider>
-          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
+          <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup_plus.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
             <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.libvirt.schedule.enabled"
-                :label="$t('plugin_backup.schedule')"
+                :label="$t('plugin_backup_plus.schedule')"
                 inset
                 color="green"
                 hide-details
@@ -330,7 +330,7 @@
             <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.libvirt.schedule.cron"
-                :label="$t('plugin_backup.cron_schedule')"
+                :label="$t('plugin_backup_plus.cron_schedule')"
                 :disabled="!settings.libvirt.schedule.enabled"
                 density="comfortable"
                 hide-details="auto"
@@ -341,9 +341,9 @@
           <div class="d-flex align-center">
             <v-btn color="primary" rounded :loading="libvirtRunning" :disabled="!settings.libvirt.destination" @click="runBackup('run_libvirt_backup', 'Libvirt Backup', 'libvirt')">
               <v-icon start>mdi-backup-restore</v-icon>
-              {{ $t('plugin_backup.backup_now') }}
+              {{ $t('plugin_backup_plus.backup_now') }}
             </v-btn>
-            <span v-if="libvirtRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
+            <span v-if="libvirtRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
           </div>
         </v-card-text>
       </v-card>
@@ -354,7 +354,7 @@
     <v-dialog v-model="fsDialog" max-width="800">
       <v-card>
         <v-card-title class="d-flex align-center">
-          <span>{{ $t('plugin_backup.select_directory') }}</span>
+          <span>{{ $t('plugin_backup_plus.select_directory') }}</span>
           <v-spacer />
           <v-chip size="small" class="ml-2" variant="tonal">{{ fsCurrentPath || '/' }}</v-chip>
         </v-card-title>
@@ -371,15 +371,15 @@
           <v-table density="compact">
             <thead>
               <tr>
-                <th>{{ $t('plugin_backup.name') }}</th>
-                <th style="width: 40%">{{ $t('plugin_backup.path') }}</th>
-                <th style="width: 60px" class="text-center">{{ $t('plugin_backup.action') }}</th>
+                <th>{{ $t('plugin_backup_plus.name') }}</th>
+                <th style="width: 40%">{{ $t('plugin_backup_plus.path') }}</th>
+                <th style="width: 60px" class="text-center">{{ $t('plugin_backup_plus.action') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="!fsLoading && fsItems.length === 0">
                 <td colspan="3" class="text-center text-medium-emphasis">
-                  {{ $t('plugin_backup.no_entries') }}
+                  {{ $t('plugin_backup_plus.no_entries') }}
                 </td>
               </tr>
               <tr
@@ -406,15 +406,15 @@
         <v-divider />
         <v-card-actions class="d-flex align-center">
           <div class="text-caption text-truncate" style="max-width: 60%">
-            <strong>{{ $t('plugin_backup.selected') }}:</strong>
+            <strong>{{ $t('plugin_backup_plus.selected') }}:</strong>
             <span v-if="fsActiveItem">
               {{ fsActiveItem.displayPath || fsActiveItem.path }}
             </span>
             <span v-else>-</span>
           </div>
           <v-spacer />
-          <v-btn variant="text" color="onPrimary" @click="fsDialog = false">{{ $t('plugin_backup.cancel') }}</v-btn>
-          <v-btn color="onPrimary" @click="fsSelect" :disabled="fsLoading">{{ $t('plugin_backup.select') }}</v-btn>
+          <v-btn variant="text" color="onPrimary" @click="fsDialog = false">{{ $t('plugin_backup_plus.cancel') }}</v-btn>
+          <v-btn color="onPrimary" @click="fsSelect" :disabled="fsLoading">{{ $t('plugin_backup_plus.select') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -423,6 +423,10 @@
     <v-fab @click="saveSettings" color="primary" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000" size="large" icon :loading="saving">
       <v-icon>mdi-content-save</v-icon>
     </v-fab>
+
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000" location="bottom">
+      {{ $t(snackbar.text) }}
+    </v-snackbar>
 
     <v-overlay :model-value="overlay" class="align-center justify-center">
       <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
@@ -433,10 +437,16 @@
 <script setup>
 import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
 
-const PLUGIN_NAME = 'backup';
+const PLUGIN_NAME = 'backup-plus';
 
 const loading = ref(true);
 const saving = ref(false);
+const snackbar = reactive({ show: false, text: 'plugin_backup_plus.save_success', color: 'success' });
+const showSnackbar = (text, color = 'success') => {
+  snackbar.text = text;
+  snackbar.color = color;
+  snackbar.show = true;
+};
 const overlay = ref(false);
 const bootRunning = ref(false);
 const appdataRunning = ref(false);
@@ -642,6 +652,7 @@ const saveSettings = async () => {
     if (!res.ok) {
       const error = await res.json();
       console.error('Failed to save settings:', error);
+      showSnackbar('plugin_backup_plus.save_failed', 'error');
       return;
     }
 
@@ -657,8 +668,10 @@ const saveSettings = async () => {
         function: 'update_schedule',
       }),
     });
+    showSnackbar('plugin_backup_plus.save_success');
   } catch (e) {
     console.error('Failed to save settings:', e);
+    showSnackbar('plugin_backup_plus.save_failed', 'error');
   } finally {
     saving.value = false;
   }
@@ -674,7 +687,7 @@ const fetchBackupStatus = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        command: 'mos_backup',
+        command: 'mos_backup_plus',
         args: ['--status'],
         timeout: 5,
         parse_json: true,
@@ -705,7 +718,7 @@ const fetchAppdataDirs = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        command: 'mos_backup',
+        command: 'mos_backup_plus',
         args: ['--appdata-dirs'],
         timeout: 10,
         parse_json: true,
@@ -735,7 +748,7 @@ const fetchContainerNames = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        command: 'mos_backup',
+        command: 'mos_backup_plus',
         args: ['--containers'],
         timeout: 15,
         parse_json: true,

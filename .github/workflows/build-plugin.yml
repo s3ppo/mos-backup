@@ -50,27 +50,27 @@ jobs:
       - name: Create package structure
         run: |
           VERSION=${{ steps.version.outputs.VERSION }}
-          PKG_NAME="backup-${VERSION}-1+mos-plugin"
+          PKG_NAME="backup-plus-${VERSION}-1+mos-plugin"
           PKG_DIR="${PKG_NAME}_all"
 
-          mkdir -p ${PKG_DIR}/var/www/mos-plugins/backup
+          mkdir -p ${PKG_DIR}/var/www/mos-plugins/backup-plus
           mkdir -p ${PKG_DIR}/usr/bin/plugins
           mkdir -p ${PKG_DIR}/DEBIAN
 
-          # Copy over mos_backup and make it executable
-          cp mos_backup ${PKG_DIR}/usr/bin/plugins/mos_backup
-          chmod +x ${PKG_DIR}/usr/bin/plugins/mos_backup
+          # Copy over mos_backup_plus and make it executable
+          cp mos_backup_plus ${PKG_DIR}/usr/bin/plugins/mos_backup_plus
+          chmod +x ${PKG_DIR}/usr/bin/plugins/mos_backup_plus
 
-          cp -R page/dist/backup/* ${PKG_DIR}/var/www/mos-plugins/backup/
+          cp -R page/dist/backup-plus/* ${PKG_DIR}/var/www/mos-plugins/backup-plus/
 
-          cp icon.png ${PKG_DIR}/var/www/mos-plugins/backup/
+          cp icon.png ${PKG_DIR}/var/www/mos-plugins/backup-plus/
 
           cat > ${PKG_DIR}/DEBIAN/control << EOF
-          Package: mos-backup-plugin
+          Package: mos-backup-plus-plugin
           Version: ${VERSION}-1+mos-plugin
           Architecture: all
           Maintainer: admin@mos-official.net
-          Description: Backup Plugin for MOS
+          Description: Backup Plus Plugin for MOS
           EOF
 
           cat > ${PKG_DIR}/DEBIAN/postinst << 'EOF'
@@ -88,7 +88,7 @@ jobs:
       - name: Build .deb package
         run: |
           VERSION=${{ steps.version.outputs.VERSION }}
-          PKG_NAME="backup-${VERSION}-1+mos-plugin"
+          PKG_NAME="backup-plus-${VERSION}-1+mos-plugin"
           PKG_DIR="${PKG_NAME}_all"
           DEB_FILE="${PKG_NAME}_all.deb"
 
@@ -100,12 +100,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.VERSION }}
-          name: MOS Backup Plugin ${{ steps.version.outputs.VERSION }}
+          name: MOS Backup Plus Plugin ${{ steps.version.outputs.VERSION }}
           body: |
-            Backup Plugin ${{ steps.version.outputs.VERSION }}
+            Backup Plus Plugin ${{ steps.version.outputs.VERSION }}
 
           files: |
-            backup-${{ steps.version.outputs.VERSION }}-1+mos-plugin_all.deb*
+            backup-plus-${{ steps.version.outputs.VERSION }}-1+mos-plugin_all.deb*
           draft: false
           prerelease: false
         env:

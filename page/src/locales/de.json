@@ -1,5 +1,5 @@
 {
-  "plugin_backup": {
+  "plugin_backup_plus": {
     "title": "Backup",
     "description": "Backup-Verwaltung für Boot, Appdata und Libvirt",
     "boot_backup": "Boot Backup",
@@ -34,6 +34,8 @@
     "no_entries": "Keine Einträge",
     "cancel": "Abbrechen",
     "select": "Auswählen",
+    "save_success": "Einstellungen gespeichert",
+    "save_failed": "Speichern fehlgeschlagen",
     "save": "Speichern",
     "notifications": "Benachrichtigungen",
     "notifications_hint": "Wähle, welche Meldungen in den MOS-Benachrichtigungen erscheinen",

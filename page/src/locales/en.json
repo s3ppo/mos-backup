@@ -1,5 +1,5 @@
 {
-  "plugin_backup": {
+  "plugin_backup_plus": {
     "title": "Backup",
     "description": "Backup management for boot, appdata and libvirt",
     "boot_backup": "Boot Backup",
@@ -34,6 +34,8 @@
     "no_entries": "No entries",
     "cancel": "Cancel",
     "select": "Select",
+    "save_success": "Settings saved",
+    "save_failed": "Saving failed",
     "save": "Save",
     "notifications": "Notifications",
     "notifications_hint": "Choose which messages appear in the MOS notifications",

@@ -1,6 +1,6 @@
 export default {
-  name: 'backup',
-  displayName: 'Backup',
+  name: 'backup-plus',
+  displayName: 'Backup Plus',
   description: 'Backup management for boot, appdata, LXC and VM',
   version: '0.0.1',
   icon: '',
