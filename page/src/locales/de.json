@@ -37,6 +37,8 @@
     "save": "Speichern",
     "notifications": "Benachrichtigungen",
     "notifications_hint": "Wähle, welche Meldungen in den MOS-Benachrichtigungen erscheinen",
+    "notify_mode_always": "Immer benachrichtigen",
+    "notify_mode_errors": "Nur bei Fehlern benachrichtigen",
     "notify_start": "Start-Meldungen",
     "notify_finish": "Abschluss-Meldungen"
   }

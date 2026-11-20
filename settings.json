@@ -36,6 +36,7 @@
     }
   },
   "notifications": {
+    "mode": "always",
     "start": false,
     "finish": true
   }

@@ -50,7 +50,11 @@
         </v-card-title>
         <v-card-text>
           <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup.notifications_hint') }}</span>
-          <v-row class="pt-2">
+          <v-radio-group v-model="settings.notifications.mode" class="pt-2" hide-details>
+            <v-radio value="always" :label="$t('plugin_backup.notify_mode_always')"></v-radio>
+            <v-radio value="errors" :label="$t('plugin_backup.notify_mode_errors')"></v-radio>
+          </v-radio-group>
+          <v-row class="pt-2" v-if="settings.notifications.mode === 'always'">
             <v-col cols="12" md="6">
               <v-switch
                 v-model="settings.notifications.start"
@@ -447,6 +451,7 @@ let statusInterval = null;
 
 const settings = reactive({
   notifications: {
+    mode: 'always',
     start: false,
     finish: true,
   },
@@ -529,6 +534,7 @@ const fetchSettings = async () => {
     if (res.ok) {
       const data = await res.json();
       if (data.notifications) {
+        settings.notifications.mode = data.notifications.mode === 'errors' ? 'errors' : 'always';
         settings.notifications.start = data.notifications.start === true;
         settings.notifications.finish = data.notifications.finish !== false;
       }
@@ -586,6 +592,7 @@ const saveSettings = async () => {
       },
       body: JSON.stringify({
         notifications: {
+          mode: settings.notifications.mode,
           start: settings.notifications.start,
           finish: settings.notifications.finish,
         },

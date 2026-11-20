@@ -37,6 +37,8 @@
     "save": "Save",
     "notifications": "Notifications",
     "notifications_hint": "Choose which messages appear in the MOS notifications",
+    "notify_mode_always": "Notify always",
+    "notify_mode_errors": "Notify only on errors",
     "notify_start": "Start messages",
     "notify_finish": "Finish messages"
   }

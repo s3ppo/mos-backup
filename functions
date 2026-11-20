@@ -26,20 +26,26 @@ create_lock() {
   return 0
 }
 
-# Send a notification if the given event type is enabled in settings
-# Usage: send_notify <start|finish> <message> <priority>
+# Send a notification depending on the notification settings
+# Usage: send_notify <start|finish|error> <message> <priority>
+# mode "always" (default): start/finish follow their switches, errors always
+# mode "errors": only errors are sent
 send_notify() {
   local EVENT="$1"
   local MSG="$2"
   local PRIO="$3"
-  # Defaults: start = off, finish = on
-  local DEFAULT="true"
-  [ "$EVENT" = "start" ] && DEFAULT="false"
-  local ENABLED=$(jq -r --arg e "$EVENT" --arg d "$DEFAULT" '(.notifications // {}) | if has($e) then .[$e] else ($d == "true") end' "$PLG_DIR/settings.json" 2>/dev/null)
-  [ -z "$ENABLED" ] && ENABLED="$DEFAULT"
-  if [ "$ENABLED" = "true" ] ; then
-    notify -t "Backup" -m "$MSG" -p "$PRIO"
+
+  if [ "$EVENT" != "error" ] ; then
+    local MODE=$(jq -r '.notifications.mode // "always"' "$PLG_DIR/settings.json" 2>/dev/null)
+    [ "$MODE" = "errors" ] && return 0
+    # Defaults: start = off, finish = on
+    local DEFAULT="true"
+    [ "$EVENT" = "start" ] && DEFAULT="false"
+    local ENABLED=$(jq -r --arg e "$EVENT" --arg d "$DEFAULT" '(.notifications // {}) | if has($e) then .[$e] else ($d == "true") end' "$PLG_DIR/settings.json" 2>/dev/null)
+    [ -z "$ENABLED" ] && ENABLED="$DEFAULT"
+    [ "$ENABLED" != "true" ] && return 0
   fi
+  notify -t "Backup" -m "$MSG" -p "$PRIO"
 }
 
 # Check if service is available for backup
@@ -116,6 +122,13 @@ run_boot_backup() {
     fi
 
     tar ${TAR_FLAGS} "${ARCHIVE_PATH}" -C / boot 2>/dev/null
+    local TAR_RC=$?
+    # tar exit code 1 = files changed while reading (warning), >1 = real error
+    if [ "$TAR_RC" -gt 1 ] ; then
+      rm -f "$ARCHIVE_PATH"
+      send_notify "error" "Boot backup failed (tar exit code ${TAR_RC})" "alert"
+      exit 1
+    fi
     rotate_boot_backups "$DESTINATION" "$BACKUPS_TO_KEEP"
 
     local BACKUP_SIZE=$(du -sh "$ARCHIVE_PATH" 2>/dev/null | awk '{print $1}')
@@ -213,6 +226,7 @@ run_appdata_backup() {
     local DIRECTORIES=$(cd "$SOURCE" && find . -maxdepth 1 -type d ! -name '.' -printf '%f\n' | sort)
     local BACKED_UP=0
     local SKIPPED=0
+    local FAILED=""
 
     while IFS= read -r DIR_NAME ; do
       [ -z "$DIR_NAME" ] && continue
@@ -238,6 +252,7 @@ run_appdata_backup() {
       fi
 
       tar ${TAR_FLAGS} "${BACKUP_DIR}/${DIR_NAME}.${EXT}" -C "$SOURCE" "$DIR_NAME" 2>/dev/null
+      [ $? -gt 1 ] && FAILED="${FAILED:+$FAILED, }${DIR_NAME}"
       BACKED_UP=$((BACKED_UP + 1))
     done <<< "$DIRECTORIES"
 
@@ -268,11 +283,16 @@ run_appdata_backup() {
         for DIR_NAME in $(echo "$CONTAINER_APPDATA_DIRS" | tr ' ' '\n' | sort -u) ; do
           [ -z "$DIR_NAME" ] && continue
           tar ${TAR_FLAGS} "${BACKUP_DIR}/${DIR_NAME}.${EXT}" -C "$SOURCE" "$DIR_NAME" 2>/dev/null
+          [ $? -gt 1 ] && FAILED="${FAILED:+$FAILED, }${DIR_NAME}"
           BACKED_UP=$((BACKED_UP + 1))
         done
 
         docker start "$CNAME" >/dev/null 2>&1
       done <<< "$STOP_CONTAINERS"
+    fi
+
+    if [ ! -z "$FAILED" ] ; then
+      send_notify "error" "Appdata backup failed for: ${FAILED}" "alert"
     fi
 
     rotate_appdata_backups "$DESTINATION" "$BACKUPS_TO_KEEP"
@@ -342,6 +362,13 @@ run_libvirt_backup() {
     fi
 
     tar ${TAR_FLAGS} "${ARCHIVE_PATH}" -C "$SOURCE" . 2>/dev/null
+    local TAR_RC=$?
+    # tar exit code 1 = files changed while reading (warning), >1 = real error
+    if [ "$TAR_RC" -gt 1 ] ; then
+      rm -f "$ARCHIVE_PATH"
+      send_notify "error" "Libvirt backup failed (tar exit code ${TAR_RC})" "alert"
+      exit 1
+    fi
     rotate_libvirt_backups "$DESTINATION" "$BACKUPS_TO_KEEP"
 
     local BACKUP_SIZE=$(du -sh "$ARCHIVE_PATH" 2>/dev/null | awk '{print $1}')
