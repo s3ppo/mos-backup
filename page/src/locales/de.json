@@ -1,6 +1,6 @@
 {
   "plugin_backup_plus": {
-    "title": "Backup",
+    "title": "Backup Plus",
     "description": "Backup-Verwaltung für Boot, Appdata und Libvirt",
     "boot_backup": "Boot Backup",
     "appdata_backup": "Appdata Backup",
