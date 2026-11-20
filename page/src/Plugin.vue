@@ -15,7 +15,7 @@
           <v-divider class="my-4"></v-divider>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.backup_all.schedule.enabled"
                 :label="$t('plugin_backup.schedule')"
@@ -24,7 +24,7 @@
                 hide-details
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="10">
+            <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.backup_all.schedule.cron"
                 :label="$t('plugin_backup.cron_schedule')"
@@ -50,7 +50,7 @@
         </v-card-title>
         <v-card-text>
           <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup.notifications_hint') }}</span>
-          <v-radio-group v-model="settings.notifications.mode" class="pt-2" hide-details>
+          <v-radio-group v-model="settings.notifications.mode" class="pt-2" inline hide-details>
             <v-radio value="always" :label="$t('plugin_backup.notify_mode_always')"></v-radio>
             <v-radio value="errors" :label="$t('plugin_backup.notify_mode_errors')"></v-radio>
           </v-radio-group>
@@ -118,7 +118,7 @@
           <v-divider class="my-4"></v-divider>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.boot.schedule.enabled"
                 :label="$t('plugin_backup.schedule')"
@@ -127,7 +127,7 @@
                 hide-details
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="10">
+            <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.boot.schedule.cron"
                 :label="$t('plugin_backup.cron_schedule')"
@@ -171,7 +171,7 @@
             class="mt-2"
           ></v-text-field>
           <v-row class="mt-2">
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6">
               <v-switch
                 v-model="settings.appdata.compression"
                 :label="$t('plugin_backup.compression')"
@@ -182,7 +182,7 @@
                 persistent-hint
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model.number="settings.appdata.backups_to_keep"
                 :label="$t('plugin_backup.backups_to_keep')"
@@ -240,7 +240,7 @@
           <v-divider class="my-4"></v-divider>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.appdata.schedule.enabled"
                 :label="$t('plugin_backup.schedule')"
@@ -249,7 +249,7 @@
                 hide-details
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="10">
+            <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.appdata.schedule.cron"
                 :label="$t('plugin_backup.cron_schedule')"
@@ -318,7 +318,7 @@
           <v-divider class="my-4"></v-divider>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.libvirt.schedule.enabled"
                 :label="$t('plugin_backup.schedule')"
@@ -327,7 +327,7 @@
                 hide-details
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="10">
+            <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.libvirt.schedule.cron"
                 :label="$t('plugin_backup.cron_schedule')"
