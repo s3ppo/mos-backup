@@ -42,6 +42,37 @@
         </v-card-text>
       </v-card>
 
+      <!-- Notification Settings -->
+      <v-card class="mb-4 pa-0">
+        <v-card-title class="d-flex align-center">
+          <v-icon class="mr-2">mdi-bell-outline</v-icon>
+          <span>{{ $t('plugin_backup.notifications') }}</span>
+        </v-card-title>
+        <v-card-text>
+          <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup.notifications_hint') }}</span>
+          <v-row class="pt-2">
+            <v-col cols="12" md="6">
+              <v-switch
+                v-model="settings.notifications.start"
+                :label="$t('plugin_backup.notify_start')"
+                inset
+                color="green"
+                hide-details
+              ></v-switch>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-switch
+                v-model="settings.notifications.finish"
+                :label="$t('plugin_backup.notify_finish')"
+                inset
+                color="green"
+                hide-details
+              ></v-switch>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+
       <!-- Boot Backup Settings -->
       <v-card class="mb-4 pa-0">
         <v-card-title class="d-flex align-center">
@@ -415,6 +446,10 @@ const appdataSource = ref('');
 let statusInterval = null;
 
 const settings = reactive({
+  notifications: {
+    start: false,
+    finish: true,
+  },
   backup_all: {
     schedule: {
       enabled: false,
@@ -493,6 +528,10 @@ const fetchSettings = async () => {
     });
     if (res.ok) {
       const data = await res.json();
+      if (data.notifications) {
+        settings.notifications.start = data.notifications.start === true;
+        settings.notifications.finish = data.notifications.finish !== false;
+      }
       if (data.backup_all) {
         if (data.backup_all.schedule) {
           settings.backup_all.schedule.enabled = data.backup_all.schedule.enabled || false;
@@ -546,6 +585,10 @@ const saveSettings = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        notifications: {
+          start: settings.notifications.start,
+          finish: settings.notifications.finish,
+        },
         backup_all: {
           schedule: {
             enabled: settings.backup_all.schedule.enabled,

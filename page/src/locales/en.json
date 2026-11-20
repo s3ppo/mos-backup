@@ -34,6 +34,10 @@
     "no_entries": "No entries",
     "cancel": "Cancel",
     "select": "Select",
-    "save": "Save"
+    "save": "Save",
+    "notifications": "Notifications",
+    "notifications_hint": "Choose which messages appear in the MOS notifications",
+    "notify_start": "Start messages",
+    "notify_finish": "Finish messages"
   }
 }

@@ -34,6 +34,10 @@
     "no_entries": "Keine Einträge",
     "cancel": "Abbrechen",
     "select": "Auswählen",
-    "save": "Speichern"
+    "save": "Speichern",
+    "notifications": "Benachrichtigungen",
+    "notifications_hint": "Wähle, welche Meldungen in den MOS-Benachrichtigungen erscheinen",
+    "notify_start": "Start-Meldungen",
+    "notify_finish": "Abschluss-Meldungen"
   }
 }

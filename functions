@@ -26,6 +26,22 @@ create_lock() {
   return 0
 }
 
+# Send a notification if the given event type is enabled in settings
+# Usage: send_notify <start|finish> <message> <priority>
+send_notify() {
+  local EVENT="$1"
+  local MSG="$2"
+  local PRIO="$3"
+  # Defaults: start = off, finish = on
+  local DEFAULT="true"
+  [ "$EVENT" = "start" ] && DEFAULT="false"
+  local ENABLED=$(jq -r --arg e "$EVENT" --arg d "$DEFAULT" '(.notifications // {}) | if has($e) then .[$e] else ($d == "true") end' "$PLG_DIR/settings.json" 2>/dev/null)
+  [ -z "$ENABLED" ] && ENABLED="$DEFAULT"
+  if [ "$ENABLED" = "true" ] ; then
+    notify -t "Backup" -m "$MSG" -p "$PRIO"
+  fi
+}
+
 # Check if service is available for backup
 check_service() {
   local TYPE="$1"
@@ -96,7 +112,7 @@ run_boot_backup() {
     local ARCHIVE_PATH="${DESTINATION}/${ARCHIVE_NAME}"
 
     if [ -z "$MOS_BACKUP_ALL" ] ; then
-      notify -t "Backup" -m "Starting boot backup" -p "info"
+      send_notify "start" "Starting boot backup" "info"
     fi
 
     tar ${TAR_FLAGS} "${ARCHIVE_PATH}" -C / boot 2>/dev/null
@@ -106,7 +122,7 @@ run_boot_backup() {
     if [ ! -z "$MOS_BACKUP_ALL" ] ; then
       echo "Boot: ${BACKUP_SIZE}"
     else
-      notify -t "Backup" -m "Boot backup finished (${BACKUP_SIZE})" -p "normal"
+      send_notify "finish" "Boot backup finished (${BACKUP_SIZE})" "normal"
     fi
   ) &
   sleep 1
@@ -168,7 +184,7 @@ run_appdata_backup() {
     fi
 
     if [ -z "$MOS_BACKUP_ALL" ] ; then
-      notify -t "Backup" -m "Starting appdata backup" -p "info"
+      send_notify "start" "Starting appdata backup" "info"
     fi
 
     # Build a list of dirs owned by stop containers
@@ -265,7 +281,7 @@ run_appdata_backup() {
     if [ ! -z "$MOS_BACKUP_ALL" ] ; then
       echo "Appdata: ${BACKUP_SIZE}"
     else
-      notify -t "Backup" -m "Appdata backup finished (${BACKUP_SIZE})" -p "normal"
+      send_notify "finish" "Appdata backup finished (${BACKUP_SIZE})" "normal"
     fi
   ) &
   sleep 1
@@ -322,7 +338,7 @@ run_libvirt_backup() {
     local ARCHIVE_PATH="${DESTINATION}/${ARCHIVE_NAME}"
 
     if [ -z "$MOS_BACKUP_ALL" ] ; then
-      notify -t "Backup" -m "Starting libvirt backup" -p "info"
+      send_notify "start" "Starting libvirt backup" "info"
     fi
 
     tar ${TAR_FLAGS} "${ARCHIVE_PATH}" -C "$SOURCE" . 2>/dev/null
@@ -332,7 +348,7 @@ run_libvirt_backup() {
     if [ ! -z "$MOS_BACKUP_ALL" ] ; then
       echo "Libvirt: ${BACKUP_SIZE}"
     else
-      notify -t "Backup" -m "Libvirt backup finished (${BACKUP_SIZE})" -p "normal"
+      send_notify "finish" "Libvirt backup finished (${BACKUP_SIZE})" "normal"
     fi
   ) &
   sleep 1
@@ -348,7 +364,7 @@ run_all_backups() {
     # Tell the single backups to stay quiet and report their size on stdout
     export MOS_BACKUP_ALL=true
 
-    notify -t "Backup" -m "Starting backup for all enabled services" -p "info"
+    send_notify "start" "Starting backup for all enabled services" "info"
 
     # boot Backup, check if destination is set and boot is available
     local BOOT_DEST=$(echo "$ALL_SETTINGS" | jq -r '.boot.destination // empty')
@@ -377,12 +393,12 @@ run_all_backups() {
     # Single summary over all backed up services
     if [ "$RAN" -gt 0 ] ; then
       if [ ! -z "$SUMMARY" ] ; then
-        notify -t "Backup" -m "All backups finished: ${SUMMARY}" -p "normal"
+        send_notify "finish" "All backups finished: ${SUMMARY}" "normal"
       else
-        notify -t "Backup" -m "All backups finished" -p "normal"
+        send_notify "finish" "All backups finished" "normal"
       fi
     else
-      notify -t "Backup" -m "No enabled services to back up" -p "info"
+      send_notify "finish" "No enabled services to back up" "info"
     fi
   ) &
   sleep 1
