@@ -5,14 +5,12 @@
     <div v-else style="margin-bottom: 80px">
 
       <!-- Backup All -->
-      <v-card class="mb-4">
-        <v-card-item>
-          <template #prepend>
-            <v-icon>mdi-backup-restore</v-icon>
-          </template>
-          <v-card-title>{{ $t('plugin_backup_plus.backup_all') }}</v-card-title>
-          <v-card-subtitle>{{ $t('plugin_backup_plus.backup_all_hint') }}</v-card-subtitle>
-        </v-card-item>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup_plus.backup_all')"
+        :subtitle="$t('plugin_backup_plus.backup_all_hint')"
+        prepend-icon="mdi-backup-restore"
+      >
         <v-card-text>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup_plus.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
@@ -37,7 +35,8 @@
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions class="pa-4">
+        <v-card-actions>
+          <v-spacer />
           <v-btn color="secondary" rounded :loading="bootRunning || appdataRunning || libvirtRunning" @click="runAllBackups">
             <v-icon start>mdi-backup-restore</v-icon>
             {{ $t('plugin_backup_plus.backup_now') }}
@@ -46,14 +45,12 @@
       </v-card>
 
       <!-- Notification Settings -->
-      <v-card class="mb-4">
-        <v-card-item>
-          <template #prepend>
-            <v-icon>mdi-bell-outline</v-icon>
-          </template>
-          <v-card-title>{{ $t('plugin_backup_plus.notifications') }}</v-card-title>
-          <v-card-subtitle>{{ $t('plugin_backup_plus.notifications_hint') }}</v-card-subtitle>
-        </v-card-item>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup_plus.notifications')"
+        :subtitle="$t('plugin_backup_plus.notifications_hint')"
+        prepend-icon="mdi-bell-outline"
+      >
         <v-card-text>
           <v-radio-group v-model="settings.notifications.mode" inline hide-details>
             <v-radio value="always" :label="$t('plugin_backup_plus.notify_mode_always')"></v-radio>
@@ -83,13 +80,11 @@
       </v-card>
 
       <!-- Boot Backup Settings -->
-      <v-card class="mb-4">
-        <v-card-item>
-          <template #prepend>
-            <v-icon>mdi-harddisk</v-icon>
-          </template>
-          <v-card-title>{{ $t('plugin_backup_plus.boot_backup') }}</v-card-title>
-        </v-card-item>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup_plus.boot_backup')"
+        prepend-icon="mdi-harddisk"
+      >
         <v-card-text>
           <v-text-field
             v-model="settings.boot.destination"
@@ -148,23 +143,22 @@
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions class="pa-4">
+        <v-card-actions>
+          <span v-if="bootRunning" class="ml-2 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
+          <v-spacer />
           <v-btn color="primary" rounded :loading="bootRunning" :disabled="!settings.boot.destination" @click="runBackup('run_boot_backup', 'Boot Backup', 'boot')">
             <v-icon start>mdi-backup-restore</v-icon>
             {{ $t('plugin_backup_plus.backup_now') }}
           </v-btn>
-          <span v-if="bootRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
         </v-card-actions>
       </v-card>
 
       <!-- Appdata Backup Settings -->
-      <v-card class="mb-4">
-        <v-card-item>
-          <template #prepend>
-            <v-icon>mdi-folder-multiple</v-icon>
-          </template>
-          <v-card-title>{{ $t('plugin_backup_plus.appdata_backup') }}</v-card-title>
-        </v-card-item>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup_plus.appdata_backup')"
+        prepend-icon="mdi-folder-multiple"
+      >
         <v-card-text>
           <v-text-field
             :model-value="appdataSource"
@@ -274,23 +268,22 @@
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions class="pa-4">
+        <v-card-actions>
+          <span v-if="appdataRunning" class="ml-2 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
+          <v-spacer />
           <v-btn color="primary" rounded :loading="appdataRunning" :disabled="!appdataSource || !settings.appdata.destination" @click="runBackup('run_appdata_backup', 'Appdata Backup', 'appdata')">
             <v-icon start>mdi-backup-restore</v-icon>
             {{ $t('plugin_backup_plus.backup_now') }}
           </v-btn>
-          <span v-if="appdataRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
         </v-card-actions>
       </v-card>
 
       <!-- Libvirt Backup Settings -->
-      <v-card class="mb-4">
-        <v-card-item>
-          <template #prepend>
-            <v-icon>mdi-desktop-classic</v-icon>
-          </template>
-          <v-card-title>{{ $t('plugin_backup_plus.libvirt_backup') }}</v-card-title>
-        </v-card-item>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup_plus.libvirt_backup')"
+        prepend-icon="mdi-desktop-classic"
+      >
         <v-card-text>
           <v-text-field
             v-model="settings.libvirt.source"
@@ -356,12 +349,13 @@
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions class="pa-4">
+        <v-card-actions>
+          <span v-if="libvirtRunning" class="ml-2 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
+          <v-spacer />
           <v-btn color="primary" rounded :loading="libvirtRunning" :disabled="!settings.libvirt.destination" @click="runBackup('run_libvirt_backup', 'Libvirt Backup', 'libvirt')">
             <v-icon start>mdi-backup-restore</v-icon>
             {{ $t('plugin_backup_plus.backup_now') }}
           </v-btn>
-          <span v-if="libvirtRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup_plus.backup_running') }}</span>
         </v-card-actions>
       </v-card>
 
