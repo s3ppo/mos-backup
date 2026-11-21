@@ -34,6 +34,7 @@
     "no_entries": "Keine Einträge",
     "cancel": "Abbrechen",
     "select": "Auswählen",
+    "schedule_overridden": "Wird nicht verwendet, solange der Zeitplan für „Alles sichern“ aktiv ist",
     "save_success": "Einstellungen gespeichert",
     "save_failed": "Speichern fehlgeschlagen",
     "save": "Speichern",
