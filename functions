@@ -431,15 +431,74 @@ run_all_backups() {
   sleep 1
 }
 
+# MOS builds the crontab from /boot/config/system/cron.json for custom jobs.
+# Its backup section is hardcoded to the original plugin, so we keep our own
+# entries (id prefix "backup-plus-") in that file.
+CRON_FILE="/boot/config/system/cron.json"
+CRON_ID_PREFIX="backup-plus-"
+CRON_BIN="/usr/bin/plugins/mos_backup_plus"
+
+# Remove all entries of this plugin from cron.json (other entries stay untouched)
+remove_cron_entries() {
+  [ -f "$CRON_FILE" ] || return 0
+  jq -e 'type == "array"' "$CRON_FILE" >/dev/null 2>&1 || return 1
+  local TMP="${CRON_FILE}.tmp.$$"
+  if jq --arg p "$CRON_ID_PREFIX" 'map(select((.id | tostring | startswith($p)) | not))' "$CRON_FILE" > "$TMP" ; then
+    mv "$TMP" "$CRON_FILE"
+  else
+    rm -f "$TMP"
+    return 1
+  fi
+}
+
+# Write the entries for the enabled schedules into cron.json
+# Same logic as the original plugin: if backup all is scheduled, it runs alone
+sync_cron_entries() {
+  [ -f "$PLG_DIR/settings.json" ] || return 0
+  if [ -f "$CRON_FILE" ] ; then
+    # Never touch a file we can't parse
+    jq -e 'type == "array"' "$CRON_FILE" >/dev/null 2>&1 || return 1
+  else
+    echo "[]" > "$CRON_FILE"
+  fi
+  # One-time safety copy
+  [ -f "${CRON_FILE}.bak-backup-plus" ] || cp "$CRON_FILE" "${CRON_FILE}.bak-backup-plus"
+
+  local TMP="${CRON_FILE}.tmp.$$"
+  local REDIR="> /dev/null 2>&1"
+  if jq --arg p "$CRON_ID_PREFIX" --arg bin "$CRON_BIN" --arg redir "$REDIR" --slurpfile s "$PLG_DIR/settings.json" '
+    def entry($key; $name; $arg):
+      if ($s[0][$key].schedule.enabled == true) and (($s[0][$key].schedule.cron // "") != "") then
+        [{id: ($p + $key), name: $name, schedule: $s[0][$key].schedule.cron, command: ($bin + " " + $arg + " " + $redir), enabled: true}]
+      else [] end;
+    map(select((.id | tostring | startswith($p)) | not))
+    + (if ($s[0].backup_all.schedule.enabled == true) then
+         entry("backup_all"; "MOS Backup Plus All"; "--run-all")
+       else
+         entry("boot"; "MOS Backup Plus boot"; "--run-boot")
+         + entry("appdata"; "MOS Backup Plus appdata"; "--run-appdata")
+         + entry("libvirt"; "MOS Backup Plus libvirt"; "--run-libvirt")
+       end)
+  ' "$CRON_FILE" > "$TMP" ; then
+    mv "$TMP" "$CRON_FILE"
+  else
+    rm -f "$TMP"
+    return 1
+  fi
+}
+
 update_schedule() {
+  sync_cron_entries
   /usr/local/bin/mos-cron_update
 }
 
 mos_start() {
+  sync_cron_entries
   /usr/local/bin/mos-cron_update
 }
 
 uninstall() {
-  rm -f "$PLG_DIR/settings.json" "/var/run/mos-backup-boot.pid" "/var/run/mos-backup-appdata.pid" "/var/run/mos-backup-libvirt.pid"
+  remove_cron_entries
+  rm -f "$PLG_DIR/settings.json" "/var/run/mos-backup-plus-boot.pid" "/var/run/mos-backup-plus-appdata.pid" "/var/run/mos-backup-plus-libvirt.pid"
   /usr/local/bin/mos-cron_update
 }
