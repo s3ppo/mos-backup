@@ -34,6 +34,15 @@
     "no_entries": "No entries",
     "cancel": "Cancel",
     "select": "Select",
-    "save": "Save"
+    "schedule_overridden": "Not used while the schedule for \"Backup all\" is active",
+    "save_success": "Settings saved",
+    "save_failed": "Saving failed",
+    "save": "Save",
+    "notifications": "Notifications",
+    "notifications_hint": "Choose which messages appear in the MOS notifications",
+    "notify_mode_always": "Notify always",
+    "notify_mode_errors": "Notify only on errors",
+    "notify_start": "Start messages",
+    "notify_finish": "Finish messages"
   }
 }

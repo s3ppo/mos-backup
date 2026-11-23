@@ -5,17 +5,16 @@
     <div v-else style="margin-bottom: 80px">
 
       <!-- Backup All -->
-      <v-card class="mb-4 pa-0">
-        <v-card-title class="d-flex align-center">
-          <v-icon class="mr-2">mdi-backup-restore</v-icon>
-          <span>{{ $t('plugin_backup.backup_all') }}</span>
-        </v-card-title>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup.backup_all')"
+        :subtitle="$t('plugin_backup.backup_all_hint')"
+        prepend-icon="mdi-backup-restore"
+      >
         <v-card-text>
-          <span class="text-medium-emphasis text-body-2">{{ $t('plugin_backup.backup_all_hint') }}</span>
-          <v-divider class="my-4"></v-divider>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
           <v-row class="align-center pt-2">
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.backup_all.schedule.enabled"
                 :label="$t('plugin_backup.schedule')"
@@ -24,7 +23,7 @@
                 hide-details
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="10">
+            <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.backup_all.schedule.cron"
                 :label="$t('plugin_backup.cron_schedule')"
@@ -34,20 +33,58 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-divider class="my-4"></v-divider>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer />
           <v-btn color="secondary" rounded :loading="bootRunning || appdataRunning || libvirtRunning" @click="runAllBackups">
             <v-icon start>mdi-backup-restore</v-icon>
             {{ $t('plugin_backup.backup_now') }}
           </v-btn>
+        </v-card-actions>
+      </v-card>
+
+      <!-- Notification Settings -->
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup.notifications')"
+        :subtitle="$t('plugin_backup.notifications_hint')"
+        prepend-icon="mdi-bell-outline"
+      >
+        <v-card-text>
+          <v-radio-group v-model="settings.notifications.mode" inline hide-details>
+            <v-radio value="always" :label="$t('plugin_backup.notify_mode_always')"></v-radio>
+            <v-radio value="errors" :label="$t('plugin_backup.notify_mode_errors')"></v-radio>
+          </v-radio-group>
+          <v-row class="pt-2" v-if="settings.notifications.mode === 'always'">
+            <v-col cols="12" md="6">
+              <v-switch
+                v-model="settings.notifications.start"
+                :label="$t('plugin_backup.notify_start')"
+                inset
+                color="green"
+                hide-details
+              ></v-switch>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-switch
+                v-model="settings.notifications.finish"
+                :label="$t('plugin_backup.notify_finish')"
+                inset
+                color="green"
+                hide-details
+              ></v-switch>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
 
       <!-- Boot Backup Settings -->
-      <v-card class="mb-4 pa-0">
-        <v-card-title class="d-flex align-center">
-          <v-icon class="mr-2">mdi-harddisk</v-icon>
-          <span>{{ $t('plugin_backup.boot_backup') }}</span>
-        </v-card-title>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup.boot_backup')"
+        prepend-icon="mdi-harddisk"
+      >
         <v-card-text>
           <v-text-field
             v-model="settings.boot.destination"
@@ -82,43 +119,46 @@
           </v-row>
           <v-divider class="my-4"></v-divider>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
+          <div v-if="backupAllScheduled" class="text-medium-emphasis text-body-2 mt-1">{{ $t('plugin_backup.schedule_overridden') }}</div>
           <v-row class="align-center pt-2">
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.boot.schedule.enabled"
+                :disabled="backupAllScheduled"
                 :label="$t('plugin_backup.schedule')"
                 inset
                 color="green"
                 hide-details
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="10">
+            <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.boot.schedule.cron"
                 :label="$t('plugin_backup.cron_schedule')"
-                :disabled="!settings.boot.schedule.enabled"
+                :disabled="!settings.boot.schedule.enabled || backupAllScheduled"
                 density="comfortable"
                 hide-details="auto"
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-divider class="my-4"></v-divider>
-          <div class="d-flex align-center">
-            <v-btn color="primary" rounded :loading="bootRunning" :disabled="!settings.boot.destination" @click="runBackup('run_boot_backup', 'Boot Backup', 'boot')">
-              <v-icon start>mdi-backup-restore</v-icon>
-              {{ $t('plugin_backup.backup_now') }}
-            </v-btn>
-            <span v-if="bootRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
-          </div>
         </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <span v-if="bootRunning" class="ml-2 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
+          <v-spacer />
+          <v-btn color="primary" rounded :loading="bootRunning" :disabled="!settings.boot.destination" @click="runBackup('run_boot_backup', 'Boot Backup', 'boot')">
+            <v-icon start>mdi-backup-restore</v-icon>
+            {{ $t('plugin_backup.backup_now') }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
 
       <!-- Appdata Backup Settings -->
-      <v-card class="mb-4 pa-0">
-        <v-card-title class="d-flex align-center">
-          <v-icon class="mr-2">mdi-folder-multiple</v-icon>
-          <span>{{ $t('plugin_backup.appdata_backup') }}</span>
-        </v-card-title>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup.appdata_backup')"
+        prepend-icon="mdi-folder-multiple"
+      >
         <v-card-text>
           <v-text-field
             :model-value="appdataSource"
@@ -136,7 +176,7 @@
             class="mt-2"
           ></v-text-field>
           <v-row class="mt-2">
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6">
               <v-switch
                 v-model="settings.appdata.compression"
                 :label="$t('plugin_backup.compression')"
@@ -147,7 +187,7 @@
                 persistent-hint
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model.number="settings.appdata.backups_to_keep"
                 :label="$t('plugin_backup.backups_to_keep')"
@@ -204,43 +244,46 @@
           </div>
           <v-divider class="my-4"></v-divider>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
+          <div v-if="backupAllScheduled" class="text-medium-emphasis text-body-2 mt-1">{{ $t('plugin_backup.schedule_overridden') }}</div>
           <v-row class="align-center pt-2">
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.appdata.schedule.enabled"
+                :disabled="backupAllScheduled"
                 :label="$t('plugin_backup.schedule')"
                 inset
                 color="green"
                 hide-details
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="10">
+            <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.appdata.schedule.cron"
                 :label="$t('plugin_backup.cron_schedule')"
-                :disabled="!settings.appdata.schedule.enabled"
+                :disabled="!settings.appdata.schedule.enabled || backupAllScheduled"
                 density="comfortable"
                 hide-details="auto"
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-divider class="my-4"></v-divider>
-          <div class="d-flex align-center">
-            <v-btn color="primary" rounded :loading="appdataRunning" :disabled="!appdataSource || !settings.appdata.destination" @click="runBackup('run_appdata_backup', 'Appdata Backup', 'appdata')">
-              <v-icon start>mdi-backup-restore</v-icon>
-              {{ $t('plugin_backup.backup_now') }}
-            </v-btn>
-            <span v-if="appdataRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
-          </div>
         </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <span v-if="appdataRunning" class="ml-2 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
+          <v-spacer />
+          <v-btn color="primary" rounded :loading="appdataRunning" :disabled="!appdataSource || !settings.appdata.destination" @click="runBackup('run_appdata_backup', 'Appdata Backup', 'appdata')">
+            <v-icon start>mdi-backup-restore</v-icon>
+            {{ $t('plugin_backup.backup_now') }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
 
       <!-- Libvirt Backup Settings -->
-      <v-card class="mb-4 pa-0">
-        <v-card-title class="d-flex align-center">
-          <v-icon class="mr-2">mdi-desktop-classic</v-icon>
-          <span>{{ $t('plugin_backup.libvirt_backup') }}</span>
-        </v-card-title>
+      <v-card
+        class="mb-4 pa-0"
+        :title="$t('plugin_backup.libvirt_backup')"
+        prepend-icon="mdi-desktop-classic"
+      >
         <v-card-text>
           <v-text-field
             v-model="settings.libvirt.source"
@@ -282,35 +325,38 @@
           </v-row>
           <v-divider class="my-4"></v-divider>
           <span class="text-subtitle-1 font-weight-medium">{{ $t('plugin_backup.backup_schedule') }}</span>
+          <div v-if="backupAllScheduled" class="text-medium-emphasis text-body-2 mt-1">{{ $t('plugin_backup.schedule_overridden') }}</div>
           <v-row class="align-center pt-2">
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="3">
               <v-switch
                 v-model="settings.libvirt.schedule.enabled"
+                :disabled="backupAllScheduled"
                 :label="$t('plugin_backup.schedule')"
                 inset
                 color="green"
                 hide-details
               ></v-switch>
             </v-col>
-            <v-col cols="12" md="10">
+            <v-col cols="12" md="9">
               <v-text-field
                 v-model="settings.libvirt.schedule.cron"
                 :label="$t('plugin_backup.cron_schedule')"
-                :disabled="!settings.libvirt.schedule.enabled"
+                :disabled="!settings.libvirt.schedule.enabled || backupAllScheduled"
                 density="comfortable"
                 hide-details="auto"
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-divider class="my-4"></v-divider>
-          <div class="d-flex align-center">
-            <v-btn color="primary" rounded :loading="libvirtRunning" :disabled="!settings.libvirt.destination" @click="runBackup('run_libvirt_backup', 'Libvirt Backup', 'libvirt')">
-              <v-icon start>mdi-backup-restore</v-icon>
-              {{ $t('plugin_backup.backup_now') }}
-            </v-btn>
-            <span v-if="libvirtRunning" class="ml-4 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
-          </div>
         </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <span v-if="libvirtRunning" class="ml-2 text-medium-emphasis">{{ $t('plugin_backup.backup_running') }}</span>
+          <v-spacer />
+          <v-btn color="primary" rounded :loading="libvirtRunning" :disabled="!settings.libvirt.destination" @click="runBackup('run_libvirt_backup', 'Libvirt Backup', 'libvirt')">
+            <v-icon start>mdi-backup-restore</v-icon>
+            {{ $t('plugin_backup.backup_now') }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
 
     </div>
@@ -389,6 +435,10 @@
       <v-icon>mdi-content-save</v-icon>
     </v-fab>
 
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000" location="bottom">
+      {{ $t(snackbar.text) }}
+    </v-snackbar>
+
     <v-overlay :model-value="overlay" class="align-center justify-center">
       <v-progress-circular color="onPrimary" size="64" indeterminate></v-progress-circular>
     </v-overlay>
@@ -396,13 +446,21 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 
 const PLUGIN_NAME = 'backup';
 
 const loading = ref(true);
 const saving = ref(false);
+const snackbar = reactive({ show: false, text: 'plugin_backup.save_success', color: 'success' });
+const showSnackbar = (text, color = 'success') => {
+  snackbar.text = text;
+  snackbar.color = color;
+  snackbar.show = true;
+};
 const overlay = ref(false);
+// Individual schedules are not used while the backup-all schedule is active
+const backupAllScheduled = computed(() => settings.backup_all.schedule.enabled === true);
 const bootRunning = ref(false);
 const appdataRunning = ref(false);
 const libvirtRunning = ref(false);
@@ -415,6 +473,11 @@ const appdataSource = ref('');
 let statusInterval = null;
 
 const settings = reactive({
+  notifications: {
+    mode: 'always',
+    start: false,
+    finish: true,
+  },
   backup_all: {
     schedule: {
       enabled: false,
@@ -493,6 +556,11 @@ const fetchSettings = async () => {
     });
     if (res.ok) {
       const data = await res.json();
+      if (data.notifications) {
+        settings.notifications.mode = data.notifications.mode === 'errors' ? 'errors' : 'always';
+        settings.notifications.start = data.notifications.start === true;
+        settings.notifications.finish = data.notifications.finish !== false;
+      }
       if (data.backup_all) {
         if (data.backup_all.schedule) {
           settings.backup_all.schedule.enabled = data.backup_all.schedule.enabled || false;
@@ -546,6 +614,11 @@ const saveSettings = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        notifications: {
+          mode: settings.notifications.mode,
+          start: settings.notifications.start,
+          finish: settings.notifications.finish,
+        },
         backup_all: {
           schedule: {
             enabled: settings.backup_all.schedule.enabled,
@@ -592,6 +665,7 @@ const saveSettings = async () => {
     if (!res.ok) {
       const error = await res.json();
       console.error('Failed to save settings:', error);
+      showSnackbar('plugin_backup.save_failed', 'error');
       return;
     }
 
@@ -607,8 +681,10 @@ const saveSettings = async () => {
         function: 'update_schedule',
       }),
     });
+    showSnackbar('plugin_backup.save_success');
   } catch (e) {
     console.error('Failed to save settings:', e);
+    showSnackbar('plugin_backup.save_failed', 'error');
   } finally {
     saving.value = false;
   }

@@ -34,6 +34,15 @@
     "no_entries": "Keine Einträge",
     "cancel": "Abbrechen",
     "select": "Auswählen",
-    "save": "Speichern"
+    "schedule_overridden": "Wird nicht verwendet, solange der Zeitplan für „Alles sichern“ aktiv ist",
+    "save_success": "Einstellungen gespeichert",
+    "save_failed": "Speichern fehlgeschlagen",
+    "save": "Speichern",
+    "notifications": "Benachrichtigungen",
+    "notifications_hint": "Wähle, welche Meldungen in den MOS-Benachrichtigungen erscheinen",
+    "notify_mode_always": "Immer benachrichtigen",
+    "notify_mode_errors": "Nur bei Fehlern benachrichtigen",
+    "notify_start": "Start-Meldungen",
+    "notify_finish": "Abschluss-Meldungen"
   }
 }

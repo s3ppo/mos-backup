@@ -98,7 +98,7 @@ case "$1" in
     source "/boot/optional/plugins/backup/$VERSION/functions"
     run_appdata_backup
   ;;
-  --run_libvirt)
+  --run_libvirt|--run-libvirt)
     VERSION=$(jq -r '.tag' /boot/optional/plugins/backup/template.json)
     source "/boot/optional/plugins/backup/$VERSION/functions"
     run_libvirt_backup
